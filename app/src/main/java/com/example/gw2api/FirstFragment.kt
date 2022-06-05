@@ -20,19 +20,29 @@ class FirstFragment : Fragment(R.layout.fragment_first){
         binding = FragmentFirstBinding.bind(view)
 
         val leaderboardObserver = Observer<Leaderboard> {
-//            println("\nLeaderboard: ${mutableListOf(leaderboardsViewModel.leaderboardList.value!![0])}")
-            println("\nsecond: ${leaderboardsViewModel.leaderboardList.value!![2].name}")
+            leaderboardsViewModel.leaderboardLd.value!!.forEach { println("Player names: ${it.name}") }
+//            println("\nsecond: ${leaderboardsViewModel.leaderboardLd.value!![2].name}")
+        }
+        val leaderboardDetailsObserver = Observer<SeasonDetails> {
+            println("Season name: ${leaderboardsViewModel.leaderboardDetails.value!!.name}")
         }
 
-        leaderboardsViewModel.leaderboardList.observe(viewLifecycleOwner, leaderboardObserver)
+        val leaderboardListObserver = Observer<SeasonList> {
+            leaderboardsViewModel.leaderboardListLd.value!!.forEach { println("List of season ids: $it") }
+        }
+                leaderboardsViewModel.leaderboardLd.observe(viewLifecycleOwner, leaderboardObserver)
+                leaderboardsViewModel.leaderboardDetails.observe(viewLifecycleOwner, leaderboardDetailsObserver)
+                leaderboardsViewModel.leaderboardListLd.observe(viewLifecycleOwner, leaderboardListObserver)
 
-        binding.apply {
-            button.setOnClickListener {
-                lifecycleScope.launch(Dispatchers.IO) {
-                    leaderboardsViewModel.getLeaderboard()
+                binding.apply {
+                    button.setOnClickListener {
+                        lifecycleScope.launch(Dispatchers.IO) {
+                            leaderboardsViewModel.getLeaderboard()
+                            leaderboardsViewModel.getLeaderboardDetails()
+                            leaderboardsViewModel.getLeaderboardList()
+                        }
+                    }
                 }
-            }
-        }
 
     }
 }

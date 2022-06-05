@@ -8,7 +8,7 @@ object RetrofitInstance {
 
     val api: LeaderboardApi by lazy {
         Retrofit.Builder()
-            .baseUrl("https://api.guildwars2.com/v2/pvp/seasons/")
+            .baseUrl("https://api.guildwars2.com/v2/pvp/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create()
