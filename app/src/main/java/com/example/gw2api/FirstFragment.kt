@@ -19,8 +19,9 @@ class FirstFragment : Fragment(R.layout.fragment_first){
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentFirstBinding.bind(view)
 
-        val leaderboardObserver = Observer<List<Leaderboard>> {
-            println("\nLeaderboard: ${leaderboardsViewModel.leaderboardList.value}")
+        val leaderboardObserver = Observer<Leaderboard> {
+//            println("\nLeaderboard: ${mutableListOf(leaderboardsViewModel.leaderboardList.value!![0])}")
+            println("\nsecond: ${leaderboardsViewModel.leaderboardList.value!![2].name}")
         }
 
         leaderboardsViewModel.leaderboardList.observe(viewLifecycleOwner, leaderboardObserver)
