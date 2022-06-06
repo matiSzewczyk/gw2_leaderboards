@@ -7,7 +7,8 @@ class LeaderboardsViewModel : ViewModel() {
 
     var leaderboardLd = MutableLiveData<Leaderboard>()
     var leaderboardListLd = MutableLiveData<SeasonList>()
-    var leaderboardDetails = MutableLiveData<SeasonDetails>()
+    var leaderboardDetails = MutableLiveData<MutableList<String>>()
+    var leaderboardDetailsList = mutableListOf<String>()
 
     private val seasonId = "E9191774-2EB8-4C74-BF57-7236DF40A16F"
 
@@ -22,7 +23,12 @@ class LeaderboardsViewModel : ViewModel() {
     }
 
     suspend fun getLeaderboardDetails() {
-        val response = LeaderboardRepository(RetrofitInstance.api).getLeaderboardName(seasonId)
-        leaderboardDetails.postValue(response.body()!!)
+        if (leaderboardDetailsList.isEmpty()) {
+            leaderboardListLd.value!!.forEach {
+                val response = LeaderboardRepository(RetrofitInstance.api).getLeaderboardName(it)
+                leaderboardDetailsList.add(response.body()!!.name)
+                leaderboardDetails.value = leaderboardDetailsList
+            }
+        }
     }
 }
