@@ -10,11 +10,15 @@ class LeaderboardsViewModel : ViewModel() {
     var leaderboardDetails = MutableLiveData<MutableList<String>>()
     var leaderboardDetailsList = mutableListOf<String>()
 
-    private val seasonId = "E9191774-2EB8-4C74-BF57-7236DF40A16F"
+    private var seasonId = "E9191774-2EB8-4C74-BF57-7236DF40A16F"
 
     suspend fun getLeaderboard() {
         val response = LeaderboardRepository(RetrofitInstance.api).getLeaderboard(seasonId)
-        leaderboardLd.postValue(response.body()!!)
+        if (response.isSuccessful) {
+            leaderboardLd.postValue(response.body()!!)
+        } else {
+            println("\nCall failed :c")
+        }
     }
 
     suspend fun getLeaderboardList() {
@@ -30,5 +34,9 @@ class LeaderboardsViewModel : ViewModel() {
                 leaderboardDetails.value = leaderboardDetailsList
             }
         }
+    }
+
+    fun setSeason(selectedItemPosition: Int) {
+        seasonId = leaderboardListLd.value!![selectedItemPosition]
     }
 }
