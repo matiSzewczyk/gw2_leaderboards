@@ -1,7 +1,9 @@
 package com.example.gw2api
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import org.json.JSONObject
 
 class LeaderboardsViewModel : ViewModel() {
 
@@ -21,7 +23,7 @@ class LeaderboardsViewModel : ViewModel() {
         if (response.isSuccessful) {
             leaderboardLiveData.postValue(response.body()!!)
         } else {
-            println("\nCall failed :c")
+            Log.d("error:", "Failed to load the leaderboard.")
         }
     }
 
