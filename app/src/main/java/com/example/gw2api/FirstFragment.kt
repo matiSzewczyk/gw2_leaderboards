@@ -12,7 +12,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gw2api.databinding.FragmentFirstBinding
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -31,21 +31,18 @@ class FirstFragment : Fragment(R.layout.fragment_first), AdapterView.OnItemSelec
         setupRecyclerView()
 
         val leaderboardObserver = Observer<Leaderboard> {
-            leaderboardAdapter.setListData(leaderboardsViewModel.leaderboardLd.value!!)
+            leaderboardAdapter.setListData(leaderboardsViewModel.leaderboardLiveData.value!!)
             leaderboardAdapter.notifyDataSetChanged()
         }
         val leaderboardDetailsObserver = Observer<List<String>> {
         }
         val leaderboardListObserver = Observer<SeasonList> {
         }
-        leaderboardsViewModel.leaderboardLd.observe(viewLifecycleOwner, leaderboardObserver)
-        leaderboardsViewModel.leaderboardDetails.observe(viewLifecycleOwner, leaderboardDetailsObserver)
-        leaderboardsViewModel.leaderboardListLd.observe(viewLifecycleOwner, leaderboardListObserver)
+        leaderboardsViewModel.leaderboardLiveData.observe(viewLifecycleOwner, leaderboardObserver)
+        leaderboardsViewModel.seasonNameList.observe(viewLifecycleOwner, leaderboardDetailsObserver)
+        leaderboardsViewModel.seasonIdLiveData.observe(viewLifecycleOwner, leaderboardListObserver)
 
-                lifecycleScope.launch(Dispatchers.IO) {
-                    // TODO: I need to remove this later
-                    leaderboardsViewModel.getLeaderboard()
-                    // this ^
+                lifecycleScope.launch(IO) {
                     leaderboardsViewModel.getLeaderboardList()
                     withContext(Main) {
                         leaderboardsViewModel.getLeaderboardDetails()
@@ -59,11 +56,11 @@ class FirstFragment : Fragment(R.layout.fragment_first), AdapterView.OnItemSelec
         val adapter = ArrayAdapter(
             requireContext(),
             R.layout.spinner_item,
-            leaderboardsViewModel.leaderboardDetailsList
+            leaderboardsViewModel.seasonIdList
         )
         spinner.adapter = adapter
         spinner.onItemSelectedListener = this
-        spinner.setSelection(leaderboardsViewModel.leaderboardDetailsList.size - 1)
+        spinner.setSelection(leaderboardsViewModel.lastSelectedSpinnerPosition.value!!)
     }
 
     private fun setupRecyclerView() = binding.myRecyclerView.apply {
@@ -74,9 +71,10 @@ class FirstFragment : Fragment(R.layout.fragment_first), AdapterView.OnItemSelec
 
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
         if (spinner.size > 0) {
-            lifecycleScope.launch(Dispatchers.IO) {
+            lifecycleScope.launch(Main) {
                 leaderboardsViewModel.setSeason(parent!!.selectedItemPosition)
-                withContext(Main) {
+                leaderboardsViewModel.lastSelectedSpinnerPosition.value = position
+                withContext(IO) {
                     leaderboardsViewModel.getLeaderboard()
                 }
             }

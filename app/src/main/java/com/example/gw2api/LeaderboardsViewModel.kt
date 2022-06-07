@@ -5,17 +5,21 @@ import androidx.lifecycle.ViewModel
 
 class LeaderboardsViewModel : ViewModel() {
 
-    var leaderboardLd = MutableLiveData<Leaderboard>()
-    var leaderboardListLd = MutableLiveData<SeasonList>()
-    var leaderboardDetails = MutableLiveData<MutableList<String>>()
-    var leaderboardDetailsList = mutableListOf<String>()
+    // I use this so that upon screen rotation, the correct spinner position is selected
+    var lastSelectedSpinnerPosition = MutableLiveData(0)
 
-    private var seasonId = "E9191774-2EB8-4C74-BF57-7236DF40A16F"
+    var leaderboardLiveData = MutableLiveData<Leaderboard>()
+    var seasonIdLiveData = MutableLiveData<SeasonList>()
+    var seasonNameList = MutableLiveData<MutableList<String>>()
+
+    var seasonIdList = mutableListOf<String>()
+
+    private var seasonId = MutableLiveData("E9191774-2EB8-4C74-BF57-7236DF40A16F")
 
     suspend fun getLeaderboard() {
-        val response = LeaderboardRepository(RetrofitInstance.api).getLeaderboard(seasonId)
+        val response = LeaderboardRepository(RetrofitInstance.api).getLeaderboard(seasonId.value!!)
         if (response.isSuccessful) {
-            leaderboardLd.postValue(response.body()!!)
+            leaderboardLiveData.postValue(response.body()!!)
         } else {
             println("\nCall failed :c")
         }
@@ -23,20 +27,20 @@ class LeaderboardsViewModel : ViewModel() {
 
     suspend fun getLeaderboardList() {
         val response = LeaderboardRepository(RetrofitInstance.api).getLeaderboardList()
-        leaderboardListLd.postValue(response.body()!!)
+        seasonIdLiveData.postValue(response.body()!!)
     }
 
     suspend fun getLeaderboardDetails() {
-        if (leaderboardDetailsList.isEmpty()) {
-            leaderboardListLd.value!!.forEach {
+        if (seasonIdList.isEmpty()) {
+            seasonIdLiveData.value!!.forEach {
                 val response = LeaderboardRepository(RetrofitInstance.api).getLeaderboardName(it)
-                leaderboardDetailsList.add(response.body()!!.name)
-                leaderboardDetails.value = leaderboardDetailsList
+                seasonIdList.add(response.body()!!.name)
+                seasonNameList.value = seasonIdList
             }
         }
     }
 
     fun setSeason(selectedItemPosition: Int) {
-        seasonId = leaderboardListLd.value!![selectedItemPosition]
+        seasonId.value = seasonIdLiveData.value!![selectedItemPosition]
     }
 }
