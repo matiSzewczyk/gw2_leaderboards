@@ -8,7 +8,6 @@ import com.example.gw2api.databinding.LeaderboardItemBinding
 class LeaderboardAdapter : RecyclerView.Adapter<LeaderboardAdapter.LeaderboardViewHolder>() {
     var names = Leaderboard()
 
-//    inner class StandingsViewHolder(val binding: StandingsItemBinding) : RecyclerView.ViewHolder(binding.root)
     inner class LeaderboardViewHolder(val binding: LeaderboardItemBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LeaderboardViewHolder {
