@@ -43,9 +43,9 @@ class FirstFragment : Fragment(R.layout.fragment_first), AdapterView.OnItemSelec
         leaderboardsViewModel.seasonIdLiveData.observe(viewLifecycleOwner, leaderboardListObserver)
 
                 lifecycleScope.launch(IO) {
-                    leaderboardsViewModel.getLeaderboardList()
+                    leaderboardsViewModel.getSeasonList()
                     withContext(Main) {
-                        leaderboardsViewModel.getLeaderboardDetails()
+                        leaderboardsViewModel.getSeasonName()
                         setupSpinner()
                     }
         }
@@ -72,7 +72,7 @@ class FirstFragment : Fragment(R.layout.fragment_first), AdapterView.OnItemSelec
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
         if (spinner.size > 0) {
             lifecycleScope.launch(Main) {
-                leaderboardsViewModel.setSeason(parent!!.selectedItemPosition)
+                leaderboardsViewModel.setSeasonId(parent!!.selectedItemPosition)
                 leaderboardsViewModel.lastSelectedSpinnerPosition.value = position
                 withContext(IO) {
                     leaderboardsViewModel.getLeaderboard()

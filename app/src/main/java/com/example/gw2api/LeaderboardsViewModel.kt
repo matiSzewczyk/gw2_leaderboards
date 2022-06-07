@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 class LeaderboardsViewModel : ViewModel() {
 
     // I use this so that upon screen rotation, the correct spinner position is selected
-    var lastSelectedSpinnerPosition = MutableLiveData(0)
+    var lastSelectedSpinnerPosition = MutableLiveData(43)
 
     var leaderboardLiveData = MutableLiveData<Leaderboard>()
     var seasonIdLiveData = MutableLiveData<SeasonList>()
@@ -25,12 +25,12 @@ class LeaderboardsViewModel : ViewModel() {
         }
     }
 
-    suspend fun getLeaderboardList() {
+    suspend fun getSeasonList() {
         val response = LeaderboardRepository(RetrofitInstance.api).getLeaderboardList()
         seasonIdLiveData.postValue(response.body()!!)
     }
 
-    suspend fun getLeaderboardDetails() {
+    suspend fun getSeasonName() {
         if (seasonIdList.isEmpty()) {
             seasonIdLiveData.value!!.forEach {
                 val response = LeaderboardRepository(RetrofitInstance.api).getLeaderboardName(it)
@@ -40,7 +40,7 @@ class LeaderboardsViewModel : ViewModel() {
         }
     }
 
-    fun setSeason(selectedItemPosition: Int) {
+    fun setSeasonId(selectedItemPosition: Int) {
         seasonId.value = seasonIdLiveData.value!![selectedItemPosition]
     }
 }
