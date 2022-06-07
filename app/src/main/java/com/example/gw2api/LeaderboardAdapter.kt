@@ -21,8 +21,11 @@ class LeaderboardAdapter : RecyclerView.Adapter<LeaderboardAdapter.LeaderboardVi
 
     override fun onBindViewHolder(holder: LeaderboardViewHolder, position: Int) {
         holder.binding.apply {
-            playerName.text = names[position].name
             playerStanding.text = names[position].rank.toString()
+            playerName.text = names[position].name
+            playerRating.text = names[position].scores[0].value.toString()
+            playerWins.text = names[position].scores[1].value.toString()
+            playerLosses.text = names[position].scores[2].value.toString()
         }
     }
 
