@@ -63,6 +63,7 @@ class FirstFragment : Fragment(R.layout.fragment_first), AdapterView.OnItemSelec
         )
         spinner.adapter = adapter
         spinner.onItemSelectedListener = this
+        spinner.setSelection(leaderboardsViewModel.leaderboardDetailsList.size - 1)
     }
 
     private fun setupRecyclerView() = binding.myRecyclerView.apply {
