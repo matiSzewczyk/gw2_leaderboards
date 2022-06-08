@@ -35,28 +35,29 @@ class FirstFragment : Fragment(R.layout.fragment_first), AdapterView.OnItemSelec
             leaderboardAdapter.setListData(leaderboardsViewModel.leaderboardLiveData.value!!)
             leaderboardAdapter.notifyDataSetChanged()
         }
-        val leaderboardDetailsObserver = Observer<List<String>> {}
-        val leaderboardListObserver = Observer<SeasonList> {}
 
         leaderboardsViewModel.leaderboardLiveData.observe(viewLifecycleOwner, leaderboardObserver)
-        leaderboardsViewModel.seasonNameList.observe(viewLifecycleOwner, leaderboardDetailsObserver)
-        leaderboardsViewModel.seasonIdLiveData.observe(viewLifecycleOwner, leaderboardListObserver)
 
-        lifecycleScope.launch(IO) {
-            leaderboardsViewModel.getSeasonList()
-            withContext(Main) {
-                leaderboardsViewModel.getSeasonName()
-                setupSpinner()
+        if (leaderboardsViewModel.seasonIdList.isEmpty()) {
+            lifecycleScope.launch(IO) {
+                leaderboardsViewModel.getSeasonList()
+                withContext(Main) {
+                    leaderboardsViewModel.getSeasonName()
+                    setupSpinner()
+                }
             }
+        } else {
+            setupSpinner()
         }
     }
 
     private fun setupSpinner() {
         seasonSpinner = binding.seasonSpinner
+        println("name list: ${leaderboardsViewModel.seasonNameList}")
         val seasonAdapter = ArrayAdapter(
             requireContext(),
             R.layout.spinner_item,
-            leaderboardsViewModel.seasonIdList
+            leaderboardsViewModel.seasonNameList
         )
         seasonSpinner.adapter = seasonAdapter
         seasonSpinner.onItemSelectedListener = this

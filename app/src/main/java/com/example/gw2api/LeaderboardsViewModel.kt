@@ -15,16 +15,14 @@ class LeaderboardsViewModel : ViewModel() {
     private var currentRegion = regionList[0]
 
     var leaderboardLiveData = MutableLiveData<Leaderboard>()
-    var seasonIdLiveData = MutableLiveData<SeasonList>()
-    var seasonNameList = MutableLiveData<MutableList<String>>()
+    var seasonNameList = mutableListOf<String>()
+    var seasonIdList = SeasonList()
 
-    var seasonIdList = mutableListOf<String>()
-
-    private var seasonId = MutableLiveData("E9191774-2EB8-4C74-BF57-7236DF40A16F")
+    private var seasonId = "E9191774-2EB8-4C74-BF57-7236DF40A16F"
 
     suspend fun getLeaderboard() {
         val response = LeaderboardRepository(
-            RetrofitInstance.api).getLeaderboard(seasonId.value!!, currentRegion
+            RetrofitInstance.api).getLeaderboard(seasonId, currentRegion
         )
         if (response.isSuccessful) {
             leaderboardLiveData.postValue(response.body()!!)
@@ -35,21 +33,22 @@ class LeaderboardsViewModel : ViewModel() {
 
     suspend fun getSeasonList() {
         val response = LeaderboardRepository(RetrofitInstance.api).getLeaderboardList()
-        seasonIdLiveData.postValue(response.body()!!)
+        seasonIdList = response.body()!!
+        println("seasonIdList: $seasonIdList")
     }
 
     suspend fun getSeasonName() {
-        if (seasonIdList.isEmpty()) {
-            seasonIdLiveData.value!!.forEach {
-                val response = LeaderboardRepository(RetrofitInstance.api).getLeaderboardName(it)
-                seasonIdList.add(response.body()!!.name)
-                seasonNameList.value = seasonIdList
+        if (seasonIdList.isNotEmpty()) {
+            seasonIdList.forEach {
+                println("\nit: $it")
+                val response = LeaderboardRepository(RetrofitInstance.api).getLeaderboardName(it.toString())
+                seasonNameList.add(response.body()!!.name)
             }
         }
     }
 
     fun setSeasonId(selectedItemPosition: Int) {
-        seasonId.value = seasonIdLiveData.value!![selectedItemPosition]
+        seasonId = seasonIdList[selectedItemPosition]
     }
 
     fun setRegion(position: Int) {
