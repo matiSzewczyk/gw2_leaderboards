@@ -60,7 +60,7 @@ class FirstFragment : Fragment(R.layout.fragment_first), AdapterView.OnItemSelec
         )
         seasonSpinner.adapter = seasonAdapter
         seasonSpinner.onItemSelectedListener = this
-        seasonSpinner.setSelection(leaderboardsViewModel.lastSelectedSpinnerPosition.value!!)
+        seasonSpinner.setSelection(leaderboardsViewModel.lastSelectedSpinnerPosition)
 
         regionSpinner = binding.regionSpinner
         val regionAdapter = ArrayAdapter(
@@ -97,7 +97,7 @@ class FirstFragment : Fragment(R.layout.fragment_first), AdapterView.OnItemSelec
                 if (seasonSpinner.size > 0) {
                     lifecycleScope.launch(Main) {
                         leaderboardsViewModel.setSeasonId(parent.selectedItemPosition)
-                        leaderboardsViewModel.lastSelectedSpinnerPosition.value = position
+                        leaderboardsViewModel.lastSelectedSpinnerPosition = position
                         withContext(IO) {
                             leaderboardsViewModel.getLeaderboard()
                         }

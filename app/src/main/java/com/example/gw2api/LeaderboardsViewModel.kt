@@ -6,8 +6,7 @@ import androidx.lifecycle.ViewModel
 
 class LeaderboardsViewModel : ViewModel() {
 
-    // I use this so that upon screen rotation, the correct spinner position is selected
-    var lastSelectedSpinnerPosition = MutableLiveData(43)
+    var lastSelectedSpinnerPosition = 43
 
     var regionList = listOf(
         "eu",
