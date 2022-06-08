@@ -35,20 +35,19 @@ class FirstFragment : Fragment(R.layout.fragment_first), AdapterView.OnItemSelec
             leaderboardAdapter.setListData(leaderboardsViewModel.leaderboardLiveData.value!!)
             leaderboardAdapter.notifyDataSetChanged()
         }
-        val leaderboardDetailsObserver = Observer<List<String>> {
-        }
-        val leaderboardListObserver = Observer<SeasonList> {
-        }
+        val leaderboardDetailsObserver = Observer<List<String>> {}
+        val leaderboardListObserver = Observer<SeasonList> {}
+
         leaderboardsViewModel.leaderboardLiveData.observe(viewLifecycleOwner, leaderboardObserver)
         leaderboardsViewModel.seasonNameList.observe(viewLifecycleOwner, leaderboardDetailsObserver)
         leaderboardsViewModel.seasonIdLiveData.observe(viewLifecycleOwner, leaderboardListObserver)
 
-                lifecycleScope.launch(IO) {
-                    leaderboardsViewModel.getSeasonList()
-                    withContext(Main) {
-                        leaderboardsViewModel.getSeasonName()
-                        setupSpinner()
-                    }
+        lifecycleScope.launch(IO) {
+            leaderboardsViewModel.getSeasonList()
+            withContext(Main) {
+                leaderboardsViewModel.getSeasonName()
+                setupSpinner()
+            }
         }
     }
 
