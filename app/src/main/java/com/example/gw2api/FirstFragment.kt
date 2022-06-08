@@ -19,7 +19,8 @@ import kotlinx.coroutines.withContext
 
 class FirstFragment : Fragment(R.layout.fragment_first), AdapterView.OnItemSelectedListener {
 
-    private lateinit var spinner: Spinner
+    private lateinit var seasonSpinner: Spinner
+    private lateinit var regionSpinner: Spinner
     private lateinit var binding: FragmentFirstBinding
     private val leaderboardsViewModel: LeaderboardsViewModel by viewModels()
     private lateinit var leaderboardAdapter: LeaderboardAdapter
@@ -52,15 +53,24 @@ class FirstFragment : Fragment(R.layout.fragment_first), AdapterView.OnItemSelec
     }
 
     private fun setupSpinner() {
-        spinner = binding.seasonSpinner
-        val adapter = ArrayAdapter(
+        seasonSpinner = binding.seasonSpinner
+        val seasonAdapter = ArrayAdapter(
             requireContext(),
             R.layout.spinner_item,
             leaderboardsViewModel.seasonIdList
         )
-        spinner.adapter = adapter
-        spinner.onItemSelectedListener = this
-        spinner.setSelection(leaderboardsViewModel.lastSelectedSpinnerPosition.value!!)
+        seasonSpinner.adapter = seasonAdapter
+        seasonSpinner.onItemSelectedListener = this
+        seasonSpinner.setSelection(leaderboardsViewModel.lastSelectedSpinnerPosition.value!!)
+
+        regionSpinner = binding.regionSpinner
+        val regionAdapter = ArrayAdapter(
+            requireContext(),
+            R.layout.spinner_item,
+            leaderboardsViewModel.regionList
+        )
+        regionSpinner.adapter = regionAdapter
+        regionSpinner.onItemSelectedListener = this
     }
 
     private fun setupRecyclerView() = binding.myRecyclerView.apply {
@@ -70,12 +80,29 @@ class FirstFragment : Fragment(R.layout.fragment_first), AdapterView.OnItemSelec
     }
 
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-        if (spinner.size > 0) {
-            lifecycleScope.launch(Main) {
-                leaderboardsViewModel.setSeasonId(parent!!.selectedItemPosition)
-                leaderboardsViewModel.lastSelectedSpinnerPosition.value = position
-                withContext(IO) {
-                    leaderboardsViewModel.getLeaderboard()
+        when (parent!!.id) {
+            R.id.region_spinner -> {
+                leaderboardsViewModel.setRegion(parent.selectedItemPosition)
+                // I can't use this since it will call getLeaderboard() twice.
+//                if (seasonSpinner.size > 0) {
+//                    lifecycleScope.launch(Main) {
+//                        leaderboardsViewModel.setSeasonId(leaderboardsViewModel.lastSelectedSpinnerPosition.value!!)
+//                        leaderboardsViewModel.lastSelectedSpinnerPosition.value = position
+//                        withContext(IO) {
+//                            leaderboardsViewModel.getLeaderboard()
+//                        }
+//                    }
+//                }
+            }
+            R.id.season_spinner -> {
+                if (seasonSpinner.size > 0) {
+                    lifecycleScope.launch(Main) {
+                        leaderboardsViewModel.setSeasonId(parent.selectedItemPosition)
+                        leaderboardsViewModel.lastSelectedSpinnerPosition.value = position
+                        withContext(IO) {
+                            leaderboardsViewModel.getLeaderboard()
+                        }
+                    }
                 }
             }
         }

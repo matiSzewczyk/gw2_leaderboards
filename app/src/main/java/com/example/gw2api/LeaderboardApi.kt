@@ -6,10 +6,11 @@ import retrofit2.http.Path
 
 interface LeaderboardApi {
 
-    // Display the leaderboard
-    @GET("seasons/{id}/leaderboards/ladder/eu")
+    // Display the leaderboard for EU
+    @GET("seasons/{id}/leaderboards/ladder/{region}")
     suspend fun getLeaderboard(
-        @Path("id") id: String
+        @Path("id") id: String,
+        @Path("region") region: String
     ): Response<Leaderboard>
 
     // Get the list od IDs
