@@ -34,13 +34,11 @@ class LeaderboardsViewModel : ViewModel() {
     suspend fun getSeasonList() {
         val response = LeaderboardRepository(RetrofitInstance.api).getLeaderboardList()
         seasonIdList = response.body()!!
-        println("seasonIdList: $seasonIdList")
     }
 
     suspend fun getSeasonName() {
         if (seasonIdList.isNotEmpty()) {
             seasonIdList.forEach {
-                println("\nit: $it")
                 val response = LeaderboardRepository(RetrofitInstance.api).getLeaderboardName(it.toString())
                 seasonNameList.add(response.body()!!.name)
             }

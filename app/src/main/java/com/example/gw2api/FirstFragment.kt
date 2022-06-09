@@ -53,7 +53,6 @@ class FirstFragment : Fragment(R.layout.fragment_first), AdapterView.OnItemSelec
 
     private fun setupSpinner() {
         seasonSpinner = binding.seasonSpinner
-        println("name list: ${leaderboardsViewModel.seasonNameList}")
         val seasonAdapter = ArrayAdapter(
             requireContext(),
             R.layout.spinner_item,
